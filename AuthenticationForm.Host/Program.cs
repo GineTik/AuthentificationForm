@@ -1,3 +1,5 @@
+using Microsoft.OpenApi.Models;
+
 namespace AuthenticationForm.Host
 {
     public class Program
@@ -6,14 +8,48 @@ namespace AuthenticationForm.Host
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    // configure behavior ApiController attribute
+                    options.SuppressInferBindingSourcesForParameters = false;
+                    options.SuppressModelStateInvalidFilter = false;
+                    // options.InvalidModelStateResponseFactory = context => {}
+                });
 
-            var app = builder.Build(); 
+            //builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo 
+                { 
+                    Title = "Authentification", 
+                    Version = "v1",
+                    Description = "Api description"
+                });
+            });
+
+            builder.Services.AddHttpsRedirection(options =>
+            {
+                options.HttpsPort = 7037;
+            });
+
+            var app = builder.Build();
+
+            // app.UseHsts(); // don't working by localhost host
+            // can be changed if go by path C:\Windows\System32\drivers\etc\hosts(open as .txt) and add mappings!
+            // before use, configure with AddHsts(options => ...)(services) and set MaxAge preferably no more than a day
+
+            app.UseHttpsRedirection();
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
+                app.UseMigrationsEndPoint();
+                app.UseDeveloperExceptionPage();
+
+                app.UseSwagger(options =>
+                {
+                    // options.RouteTemplate = "swagger/{documentName}/swagger.{json|yaml}" // default value
+                });
                 app.UseSwaggerUI(options =>
                 {
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
@@ -21,7 +57,7 @@ namespace AuthenticationForm.Host
                 });
             }
 
-            app.MapGet("/hello_world", () => "Hello World!");
+            app.MapControllers();
 
             app.Run();
         }
