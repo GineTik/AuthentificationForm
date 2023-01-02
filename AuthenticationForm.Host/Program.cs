@@ -28,9 +28,17 @@ namespace AuthenticationForm.Host
                 });
             });
 
+            // configure https redirection
             builder.Services.AddHttpsRedirection(options =>
             {
                 options.HttpsPort = 7037;
+            });
+
+            // configurate cookie
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
 
             var app = builder.Build();
@@ -57,7 +65,8 @@ namespace AuthenticationForm.Host
                 });
             }
 
-            app.MapControllers();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.Run();
         }
