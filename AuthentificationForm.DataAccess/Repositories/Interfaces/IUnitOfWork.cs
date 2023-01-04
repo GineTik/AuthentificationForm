@@ -1,6 +1,6 @@
 ﻿namespace AuthentificationForm.DataAccess.Repositories.Interfaces
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
         IUserRepository UserRepository { get; }
         IRoleRepository RoleRepository { get; }

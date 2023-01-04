@@ -56,7 +56,7 @@ namespace AuthenticationForm.Host
 
                 app.UseSwagger(options =>
                 {
-                    // options.RouteTemplate = "swagger/{documentName}/swagger.{json|yaml}" // default value
+                    options.RouteTemplate = "swagger/{documentName}/swagger.{json|yaml}"; // default value
                 });
                 app.UseSwaggerUI(options =>
                 {

@@ -1,11 +1,13 @@
 ﻿namespace AuthentificationForm.DataAccess.Repositories.Interfaces
 {
-    public interface IRepository<TEntity>
+    public interface IRepository<TEntity> : IRepository<TEntity, TEntity> { }
+
+    public interface IRepository<TReturn, TParameter> 
     {
-        TEntity Get(int id);
-        TEntity Add(TEntity entity);
-        TEntity Remove(int id);
-        TEntity Update(TEntity entity);
-        IList<TEntity> GetAll();
+        TReturn? Get(int id);
+        TReturn Add(TParameter entity);
+        TReturn Remove(int id);
+        TReturn Update(TParameter entity);
+        IList<TReturn> GetAll();
     }
 }

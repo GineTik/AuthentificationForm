@@ -9,17 +9,17 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Middlewares\" />
-    <Folder Include="ServicesExtensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuthentificationForm.BusinessLogic\AuthentificationForm.BusinessLogic.csproj" />
+    <ProjectReference Include="..\AuthentificationForm.DataAccess\AuthentificationForm.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
