@@ -5,6 +5,6 @@ namespace AuthentificationForm.DataAccess.Repositories.Interfaces
 {
     public interface IUserRepository : IRepository<User, UserCommandQuery>
     {
-        User GetByEmail(string email);
+        User? GetByEmail(string email);
     }
 }

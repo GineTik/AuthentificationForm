@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="EF\Migrations\" />
-    <Folder Include="Repositories\EFImplemetations\" />
   </ItemGroup>
 
   <ItemGroup>

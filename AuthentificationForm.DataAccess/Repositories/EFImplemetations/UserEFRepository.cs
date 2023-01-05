@@ -37,17 +37,17 @@ namespace AuthentificationForm.DataAccess.Repositories.EFImplemetations
             return _context.Users.ToList();
         }
 
-        public User GetByEmail(string email)
+        public User? GetByEmail(string email)
         {
             return _context.Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public User? Remove(int id)
+        public User Remove(int id)
         {
             throw new NotImplementedException();
         }
 
-        public User? Update(UserCommandQuery entity)
+        public User Update(UserCommandQuery entity)
         {
             var result = _manager.UpdateAsync(entity.User).GetAwaiter().GetResult();
 

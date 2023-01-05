@@ -28,19 +28,19 @@ namespace AuthenticationForm.Host
                 });
             });
 
+            builder.Services.AddAuthentication()
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Authentification/Login";
+                    //options.AccessDeniedPath = "/auth/forbidden";
+                });
+
             // configure https redirection
             builder.Services.AddHttpsRedirection(options =>
             {
                 options.HttpsPort = 7037;
             });
-
-            // configurate cookie
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.LoginPath = "/Identity/Account/Login";
-                //options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-            });
-
+            
             var app = builder.Build();
 
             // app.UseHsts(); // don't working by localhost host
