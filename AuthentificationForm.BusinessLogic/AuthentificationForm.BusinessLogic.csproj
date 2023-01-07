@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuthenticationForm.Core\AuthenticationForm.Core.csproj" />
+    <ProjectReference Include="..\AuthentificationForm.DataAccess\AuthentificationForm.DataAccess.csproj" />
+  </ItemGroup>
+
 </Project>

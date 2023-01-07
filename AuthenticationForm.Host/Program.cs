@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 
 namespace AuthenticationForm.Host
@@ -28,10 +29,10 @@ namespace AuthenticationForm.Host
                 });
             });
 
-            builder.Services.AddAuthentication()
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/Authentification/Login";
+                    options.LoginPath = "";
                     //options.AccessDeniedPath = "/auth/forbidden";
                 });
 
