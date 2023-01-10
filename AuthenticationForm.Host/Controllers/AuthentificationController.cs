@@ -57,7 +57,7 @@ namespace AuthenticationForm.Host.Controllers
         }
 
         [HttpGet]
-        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        [Authorize]
         public dynamic GetLoginedUser()
         {
             var user = _userService.GetLoginedUser();

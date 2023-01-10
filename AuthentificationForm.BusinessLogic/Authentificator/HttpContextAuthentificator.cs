@@ -15,13 +15,15 @@ namespace AuthentificationForm.BusinessLogic.Authentificator
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly IClaimPrincipalFactory _claimsFactory;
+        private readonly SignInManager<User> _signInManager;
 
-        public HttpContextAuthentificator(IUnitOfWork unitOfWork, IHttpContextAccessor accessor, UserManager<User> userManager, IClaimPrincipalFactory claimsFactory)
+        public HttpContextAuthentificator(IUnitOfWork unitOfWork, IHttpContextAccessor accessor, UserManager<User> userManager, IClaimPrincipalFactory claimsFactory, SignInManager<User> signInManager)
         {
             _httpContext = accessor.HttpContext;
             _unitOfWork = unitOfWork;
             _userManager = userManager;
             _claimsFactory = claimsFactory;
+            _signInManager = signInManager;
         }
 
         public User? LoginedUser => _userManager.GetUserAsync(_httpContext.User).GetAwaiter().GetResult();
@@ -76,7 +78,6 @@ namespace AuthentificationForm.BusinessLogic.Authentificator
             var claimsPrincipal = _claimsFactory.CreateClaimsPrincipal(user, _unitOfWork.RoleRepository);
 
             _httpContext.SignInAsync(
-                claimsPrincipal.Identity.AuthenticationType,
                 claimsPrincipal,
                 new AuthenticationProperties()
                 {

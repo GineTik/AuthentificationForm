@@ -1,6 +1,7 @@
 using AuthenticationForm.Host.Middlewares;
 using AuthenticationForm.Host.ServicesExtensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 
 namespace AuthenticationForm.Host
@@ -34,12 +35,19 @@ namespace AuthenticationForm.Host
                 });
             });
 
-            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    //options.LoginPath = "";
-                    //options.AccessDeniedPath = "/auth/forbidden";
-                });
+            builder.Services.AddAuthentication(options =>
+            {
+                var defaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = defaultScheme;
+                options.DefaultChallengeScheme = defaultScheme;
+                options.DefaultSignInScheme = defaultScheme;
+                options.DefaultScheme = defaultScheme;
+            })
+            .AddCookie(options =>
+            {
+                //options.LoginPath = "";
+                //options.AccessDeniedPath = "/auth/forbidden";
+            });
 
             // configure https redirection
             builder.Services.AddHttpsRedirection(options =>
