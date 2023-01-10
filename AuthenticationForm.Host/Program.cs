@@ -1,3 +1,5 @@
+using AuthenticationForm.Host.Middlewares;
+using AuthenticationForm.Host.ServicesExtensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 
@@ -8,6 +10,9 @@ namespace AuthenticationForm.Host
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDataServices();
+            builder.Services.AddBussinessLogicServices();
 
             builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
@@ -32,7 +37,7 @@ namespace AuthenticationForm.Host
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "";
+                    //options.LoginPath = "";
                     //options.AccessDeniedPath = "/auth/forbidden";
                 });
 
@@ -41,7 +46,9 @@ namespace AuthenticationForm.Host
             {
                 options.HttpsPort = 7037;
             });
-            
+
+            //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
             var app = builder.Build();
 
             // app.UseHsts(); // don't working by localhost host
@@ -52,8 +59,8 @@ namespace AuthenticationForm.Host
 
             if (app.Environment.IsDevelopment())
             {
-                app.UseMigrationsEndPoint();
                 app.UseDeveloperExceptionPage();
+                //app.UseMigrationsEndPoint();
 
                 app.UseSwagger(options =>
                 {
@@ -66,8 +73,12 @@ namespace AuthenticationForm.Host
                 });
             }
 
+            app.UseMiddleware<FillDefaultDataValueMiddleware>();
+
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.MapControllers();
 
             app.Run();
         }

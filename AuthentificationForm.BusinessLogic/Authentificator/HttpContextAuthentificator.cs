@@ -1,10 +1,9 @@
 ﻿using AuthenticationForm.Core.Models;
 using AuthenticationForm.Core.Models.CommandQueries;
-using AuthentificationForm.BusinessLogic.Authentificator.AuthentificationResults;
+using AuthentificationForm.Core.Models.AuthentificationModels;
 using AuthentificationForm.BusinessLogic.Authentificator.ClaimPrincipalFactories;
 using AuthentificationForm.DataAccess.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -17,7 +16,7 @@ namespace AuthentificationForm.BusinessLogic.Authentificator
         private readonly UserManager<User> _userManager;
         private readonly IClaimPrincipalFactory _claimsFactory;
 
-        public HttpContextAuthentificator(IUnitOfWork unitOfWork, HttpContextAccessor accessor, UserManager<User> userManager, IClaimPrincipalFactory claimsFactory)
+        public HttpContextAuthentificator(IUnitOfWork unitOfWork, IHttpContextAccessor accessor, UserManager<User> userManager, IClaimPrincipalFactory claimsFactory)
         {
             _httpContext = accessor.HttpContext;
             _unitOfWork = unitOfWork;
@@ -27,34 +26,35 @@ namespace AuthentificationForm.BusinessLogic.Authentificator
 
         public User? LoginedUser => _userManager.GetUserAsync(_httpContext.User).GetAwaiter().GetResult();
 
-        // ============================
-        // зробити повернення якогось результату входу/реєстрації(наприклад, LoginResult або AuthentificatorResult)
-        // ============================
-
-        public AuthentificationResult Login(User user, string password, bool rememberMe)
+        public AuthentificationResult TryLogin(User user, string password, bool rememberMe)
         {
             ArgumentNullException.ThrowIfNull(user);
             ArgumentNullException.ThrowIfNull(password);
 
-            if (_unitOfWork.UserRepository.GetByEmail(user.Email) == null)
-                return AuthentificationResult.Failure(AuthentificationErrors.UserNotFound);
+            var loginedUser = _unitOfWork.UserRepository.GetByEmail(user.Email);
+            if (loginedUser == null)
+                return AuthentificationResult.Failure(AuthentificationResponses.UserNotFound);
 
-            return SignInWithPassword(user, password, rememberMe);
+            return SignInWithPassword(loginedUser, password, rememberMe);
         }
 
-        public AuthentificationResult Registration(User user, string password, bool rememberMe)
+        public AuthentificationResult TryRegistration(User user, string password, bool rememberMe)
         {
             ArgumentNullException.ThrowIfNull(user);
             ArgumentNullException.ThrowIfNull(password);
 
             if (_unitOfWork.UserRepository.GetByEmail(user.Email) != null)
-                return AuthentificationResult.Failure(AuthentificationErrors.UserNotFound);
+                return AuthentificationResult.Failure(AuthentificationResponses.UserIsExists);
 
             var addedUser = _unitOfWork.UserRepository.Add(new UserCommandQuery
             {
                 User = user,
                 Password = password,
             });
+            bool result = _unitOfWork.UserRepository.AttachRole(addedUser.Id, RoleList.User);
+
+            if (result == false)
+                throw new InvalidOperationException("failed attach role to user");
 
             return SignIn(addedUser, rememberMe);
         }
@@ -68,14 +68,16 @@ namespace AuthentificationForm.BusinessLogic.Authentificator
         {
             if (_userManager.CheckPasswordAsync(user, password).GetAwaiter().GetResult() == true)
                 return SignIn(user, rememberMe);
-            return AuthentificationResult.Failure(AuthentificationErrors.UserNotFound);
+            return AuthentificationResult.Failure(AuthentificationResponses.UserNotFound);
         }
 
         private AuthentificationResult SignIn(User user, bool rememberMe)
         {
+            var claimsPrincipal = _claimsFactory.CreateClaimsPrincipal(user, _unitOfWork.RoleRepository);
+
             _httpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                _claimsFactory.CreateClaimsPrincipal(user, _unitOfWork.RoleRepository),
+                claimsPrincipal.Identity.AuthenticationType,
+                claimsPrincipal,
                 new AuthenticationProperties()
                 {
                     IsPersistent = rememberMe,

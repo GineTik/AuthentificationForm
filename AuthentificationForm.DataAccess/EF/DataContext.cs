@@ -12,12 +12,16 @@ namespace AuthentificationForm.DataAccess.EF
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.LogTo(Console.WriteLine, LogLevel.Debug); // LogLevel.Debug - default value
+            //optionsBuilder.LogTo(Console.WriteLine, LogLevel.Debug); // LogLevel.Debug - default value
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
 
+            builder.Entity<User>()
+                .Property(b => b.DateOfRegistration)
+                .HasDefaultValueSql("getutcdate()");
         }
     }
 }

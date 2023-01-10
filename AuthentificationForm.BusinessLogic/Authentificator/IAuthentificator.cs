@@ -1,12 +1,12 @@
 ﻿using AuthenticationForm.Core.Models;
-using AuthentificationForm.BusinessLogic.Authentificator.AuthentificationResults;
+using AuthentificationForm.Core.Models.AuthentificationModels;
 
 namespace AuthentificationForm.BusinessLogic.Authentificator
 {
     public interface IAuthentificator
     {
         User? LoginedUser { get; }
-        AuthentificationResult Login(User user, string password, bool rememberMe);
-        AuthentificationResult Registration(User user, string password, bool rememberMe);
+        AuthentificationResult TryLogin(User user, string password, bool rememberMe);
+        AuthentificationResult TryRegistration(User user, string password, bool rememberMe);
     }
 }

@@ -27,12 +27,21 @@ namespace AuthentificationForm.DataAccess.Repositories.EFImplemetations
             return entity.User;
         }
 
-        public User? Get(int id)
+        public bool AttachRole(long userId, RoleList role)
+        {
+            var user = Get(userId);
+            ArgumentNullException.ThrowIfNull(user);
+
+            var result = _manager.AddToRoleAsync(user, role.ToString()).GetAwaiter().GetResult();
+            return result.Succeeded;
+        }
+
+        public User? Get(long id)
         {
             return _context.Users.FirstOrDefault(u => u.Id == id);
         }
 
-        public IList<User> GetAll()
+        public IEnumerable<User> GetAll()
         {
             return _context.Users.ToList();
         }
@@ -42,7 +51,7 @@ namespace AuthentificationForm.DataAccess.Repositories.EFImplemetations
             return _context.Users.FirstOrDefault(u => u.Email == email);
         }
 
-        public User Remove(int id)
+        public User Remove(long id)
         {
             throw new NotImplementedException();
         }

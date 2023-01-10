@@ -4,10 +4,10 @@
 
     public interface IRepository<TReturn, TParameter> 
     {
-        TReturn? Get(int id);
+        TReturn? Get(long id);
         TReturn Add(TParameter entity);
-        TReturn Remove(int id);
+        TReturn Remove(long id);
         TReturn Update(TParameter entity);
-        IList<TReturn> GetAll();
+        IEnumerable<TReturn> GetAll();
     }
 }

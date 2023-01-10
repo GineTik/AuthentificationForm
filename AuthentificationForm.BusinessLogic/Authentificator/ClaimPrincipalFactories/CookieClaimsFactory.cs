@@ -11,10 +11,10 @@ namespace AuthentificationForm.BusinessLogic.Authentificator.ClaimPrincipalFacto
         {
             var claims = new List<Claim>
             {
-                new Claim("Id", user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), // ClaimTypes.NameIdentifier for UserManager.GetUserAsync
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, String.Join(", ", repository.GetAllByUserId(user.Id))),
+                new Claim(ClaimTypes.Role, repository.GetAllByUserId(user.Id).Last().Name),
             };
 
             var claimsIdentity = new ClaimsIdentity(
