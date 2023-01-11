@@ -1,7 +1,6 @@
 using AuthenticationForm.Host.Middlewares;
 using AuthenticationForm.Host.ServicesExtensions;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 
 namespace AuthenticationForm.Host
@@ -43,11 +42,7 @@ namespace AuthenticationForm.Host
                 options.DefaultSignInScheme = defaultScheme;
                 options.DefaultScheme = defaultScheme;
             })
-            .AddCookie(options =>
-            {
-                //options.LoginPath = "";
-                //options.AccessDeniedPath = "/auth/forbidden";
-            });
+            .AddCookie();
 
             // configure https redirection
             builder.Services.AddHttpsRedirection(options =>
